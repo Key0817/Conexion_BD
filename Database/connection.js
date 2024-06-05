@@ -7,7 +7,7 @@ const dbSettings = {
     user: 'sa',                    
     password: '1231231234',
     server: 'KEYLOR23-PC',
-    database: 'Northwind',
+    database: 'Pizzahat1',
     port: 1433,
     options: {
         encrypt: true,

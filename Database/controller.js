@@ -1,3 +1,4 @@
+const express = require('express');
 const { getConnection } = require('./connection');
 
 /*
@@ -122,16 +123,13 @@ const login = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
-    }
+    }   
 };
 
-/*
-Function to query Customers table
-*/
-const getCustomers = async (req, res) => {
+const obtenerClientes = async (req, res) => {
     try {
         const pool = await getConnection();
-        const result = await pool.request().query('SELECT * FROM Customers');
+        const result = await pool.request().query('SELECT [Nombre ], [Apellido 1], [Apellido 2] FROM PRUEBAS');
         res.json(result.recordset);
     } catch (error) {
         console.error(error);
@@ -139,15 +137,18 @@ const getCustomers = async (req, res) => {
     }
 };
 
+const router = express.Router();
 
+// Ruta para obtener clientes
+router.get('/clientes', obtenerClientes);
 module.exports = {
+    callStoredProcedure,
     GetAdditionalAccountMovement,
     GetMasterAccountMovements,
     GetSubAccountStatements,
     ShowMasterAccountStatement,
     ShowPhysicalCard,
     login,
-    getCustomers,
+    obtenerClientes, // Asegúrate de exportar esta función también
+    router,
 };
-
-

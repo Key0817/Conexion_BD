@@ -1,22 +1,25 @@
+// Obtén referencias a los elementos del DOM
 const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
 const resetButton = document.getElementById('resetButton');
-
-// Simulación de datos de clientes (puedes reemplazar esto con solicitudes AJAX a tu servidor)
-const clientes = [
-    { id: 1, nombre: 'Keylor Palacios Gómez', contador: 0 },
-    { id: 2, nombre: 'Fabier Méndez Quesada', contador: 0 },
-    { id: 3, nombre: 'Diego Castro Carazo', contador: 0 },
-    { id: 4, nombre: 'Farlen Méndez Cespedes', contador: 0 },
-    { id: 5, nombre: 'Osquitar Rodríguez Carvajal', contador: 0 },
-    { id: 6, nombre: 'Omar Hernandez Jiménez', contador: 0 },
-    { id: 7, nombre: 'David Solis Carvallo', contador: 0 },
-    { id: 8, nombre: 'Fabricio Rojas Rodríguez', contador: 0 },
-    { id: 9, nombre: 'Karla Gómez Quintero', contador: 0 }
-];
+const clientesFrecuentesList = document.getElementById('clientesFrecuentesList');
+const clientesFrecuentesButton = document.getElementById('clientesFrecuentesButton');
 
 const clientesFrecuentes = [];
 
+// Función para obtener clientes desde el backend
+async function obtenerClientes() {
+    try {
+        const response = await fetch('/api/clientes');
+        if (!response.ok) {
+            throw new Error('Error en la solicitud');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error al obtener clientes:', error);
+        return [];
+    }
+}
 // Función para mostrar sugerencias de autocompletado
 function mostrarSugerencias(sugerencias) {
     searchResults.innerHTML = '';
@@ -25,35 +28,36 @@ function mostrarSugerencias(sugerencias) {
         const spanNombre = document.createElement('span');
         const spanContador = document.createElement('span');
         
-        spanNombre.textContent = sugerencia.nombre;
-        spanContador.textContent = ` (${sugerencia.contador} veces buscado)`;
-        spanContador.style.color = 'gray'; // Color opcional para el contador
+        spanNombre.textContent = `${sugerencia['Nombre '] || ''} ${sugerencia['Apellido 1'] || ''} ${sugerencia['Apellido 2'] || ''}`;
+        spanContador.textContent = ` (${sugerencia.contador || 0} veces buscado)`;
+        spanContador.style.color = 'gray';
 
         li.appendChild(spanNombre);
         li.appendChild(spanContador);
 
         li.addEventListener('click', () => {
-            searchInput.value = sugerencia.nombre;
+            searchInput.value = `${sugerencia['Nombre '] || ''} ${sugerencia['Apellido 1'] || ''} ${sugerencia['Apellido 2'] || ''}`;
             searchResults.innerHTML = '';
+            incrementarContador(sugerencia);
         });
 
         searchResults.appendChild(li);
     });
 }
 
-// Función para filtrar clientes basados en el término de búsqueda
-function filtrarClientes(termino) {
+/// Función para filtrar clientes basados en el término de búsqueda
+async function filtrarClientes(termino) {
+    const clientes = await obtenerClientes();
     const sugerencias = clientes.filter(cliente =>
-        cliente.nombre.toLowerCase().startsWith(termino.toLowerCase())
+        `${cliente['Nombre '] || ''} ${cliente['Apellido 1'] || ''} ${cliente['Apellido 2'] || ''}`.toLowerCase().startsWith(termino.toLowerCase())
     );
     mostrarSugerencias(sugerencias);
 }
 
 // Función para incrementar el contador de búsqueda del cliente seleccionado
 function incrementarContador(cliente) {
-    cliente.contador++;
-    console.log(`Se ha buscado a ${cliente.nombre} ${cliente.contador} veces.`);
-   
+    cliente.contador = (cliente.contador || 0) + 1;
+    console.log(`Se ha buscado a ${cliente['Nombre '] || ''} ${cliente['Apellido 1'] || ''} ${cliente['Apellido 2'] || ''} ${cliente.contador} veces.`);
 
     if (cliente.contador >= 5 && !clientesFrecuentes.includes(cliente)) {
         agregarClienteFrecuente(cliente);
@@ -83,18 +87,8 @@ function resetearContador(cliente) {
     quitarClienteFrecuente(cliente);
 }
 
-// Función para actualizar clientes frecuentes
-function actualizarClientesFrecuentes() {
-    clientes.forEach(cliente => {
-        if (cliente.contador >= 5) {
-            agregarClienteFrecuente(cliente);
-        }
-    });
-}
-
 // Función para mostrar clientes frecuentes
 function mostrarClientesFrecuentes() {
-    const clientesFrecuentesList = document.getElementById('clientesFrecuentesList');
     clientesFrecuentesList.innerHTML = '';
 
     if (clientesFrecuentes.length === 0) {
@@ -107,7 +101,7 @@ function mostrarClientesFrecuentes() {
             const spanNombre = document.createElement('span');
             const resetButton = document.createElement('button');
 
-            spanNombre.textContent = cliente.nombre;
+            spanNombre.textContent = `${cliente['Nombre '] || ''} ${cliente['Apellido 1'] || ''}`;
             resetButton.textContent = 'Eliminar';
             resetButton.addEventListener('click', () => resetearContador(cliente));
 
@@ -130,10 +124,11 @@ searchInput.addEventListener('input', () => {
 });
 
 // Evento de presionar Enter en la barra de búsqueda
-searchInput.addEventListener('keypress', (event) => {
+searchInput.addEventListener('keypress', async (event) => {
     if (event.key === 'Enter') {
         const termino = searchInput.value.trim();
-        const clienteSeleccionado = clientes.find(cliente => cliente.nombre.toLowerCase() === termino.toLowerCase());
+        const clientes = await obtenerClientes();
+        const clienteSeleccionado = clientes.find(cliente => `${cliente['Nombre '] || ''} ${cliente['Apellido 1'] || ''} ${cliente['Apellido 2'] || ''}`.toLowerCase() === termino.toLowerCase());
         if (clienteSeleccionado) {
             incrementarContador(clienteSeleccionado);
         }
@@ -143,14 +138,15 @@ searchInput.addEventListener('keypress', (event) => {
 // Evento de clic en el botón de reset
 resetButton.addEventListener('click', () => {
     clientes.forEach(cliente => cliente.contador = 0);
-    console.log('Contadores de búsqueda reseteados.');
+    console.log('Se han reiniciado los contadores de todos los clientes.');
+    clientesFrecuentes.length = 0;
+    mostrarClientesFrecuentes();
 });
 
-// Evento de clic en el botón de "Clientes Frecuentes"
-document.getElementById('clientesFrecuentesButton').addEventListener('click', () => {
-    const clientesFrecuentesList = document.getElementById('clientesFrecuentesList');
-    clientesFrecuentesList.style.display = (clientesFrecuentesList.style.display === 'none') ? 'block' : 'none';
+// Evento de clic en el botón para mostrar clientes frecuentes
+clientesFrecuentesButton.addEventListener('click', () => {
+    mostrarClientesFrecuentes();
 });
 
-// Inicializar la lista de clientes frecuentes
-actualizarClientesFrecuentes();
+// Inicialización
+mostrarClientesFrecuentes();
