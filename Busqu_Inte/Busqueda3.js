@@ -10,7 +10,7 @@ const clientesFrecuentes = [];
 // Función para obtener clientes desde el backend
 async function obtenerClientes() {
     try {
-        const response = await fetch('/api/clientes');
+        const response = await fetch('/clientes');
         if (!response.ok) {
             throw new Error('Error en la solicitud');
         }
