@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pedidos</title>
+    <link rel="stylesheet" href="crudStyle.css">
+</head>
+<body>
+    <h1>Gestión de Pedidos</h1>
+    <!-- Formulario para crear pedido -->
+    <form id="create-pedido-form">
+        <input type="text" name="Estado" placeholder="Estado" required>
+        <input type="date" name="Fecha" required>
+        <input type="number" name="ClienteID" placeholder="ID del Cliente" required>
+        <input type="number" name="SucursalID" placeholder="ID de la Sucursal" required>
+        <input type="number" name="MetodoPagoID" placeholder="ID del Método de Pago" required>
+        <input type="number" name="Total" placeholder="Total" required>
+        <input type="number" name="NumeroFactura" placeholder="Número de Factura" required>
+        <button type="submit">Crear Pedido</button>
+    </form>
+
+    <!-- Formulario para obtener detalles de pedido -->
+    <form id="get-pedido-form">
+        <input type="number" name="pedidoID" placeholder="ID del Pedido" required>
+        <button type="submit">Obtener Detalles del Pedido</button>
+    </form>
+
+    <!-- Formulario para actualizar pedido -->
+    <form id="update-pedido-form">
+        <input type="number" name="pedidoID" placeholder="ID del Pedido" required>
+        <input type="text" name="Estado" placeholder="Estado" required>
+        <input type="date" name="Fecha" required>
+        <button type="submit">Actualizar Pedido</button>
+    </form>
+
+    <!-- Formulario para eliminar pedido -->
+    <form id="delete-pedido-form">
+        <input type="number" name="pedidoID" placeholder="ID del Pedido" required>
+        <button type="submit">Eliminar Pedido</button>
+    </form>
+
+    <script>
+        document.getElementById('create-pedido-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const data = {
+                Estado: event.target.Estado.value,
+                Fecha: event.target.Fecha.value,
+                ClienteID: event.target.ClienteID.value,
+                SucursalID: event.target.SucursalID.value,
+                MetodoPagoID: event.target.MetodoPagoID.value,
+                Total: event.target.Total.value,
+                NumeroFactura: event.target.NumeroFactura.value
+            };
+            const response = await fetch('/pedidos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            console.log('Pedido creado:', await response.json());
+        });
+
+        document.getElementById('get-pedido-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const pedidoID = event.target.pedidoID.value;
+            const response = await fetch(`/pedidos/${pedidoID}`);
+            console.log('Detalles del pedido:', await response.json());
+        });
+
+        document.getElementById('update-pedido-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const pedidoID = event.target.pedidoID.value;
+            const data = {
+                Estado: event.target.Estado.value,
+                Fecha: event.target.Fecha.value
+            };
+            const response = await fetch(`/pedidos/${pedidoID}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            console.log('Pedido actualizado:', await response.json());
+        });
+
+        document.getElementById('delete-pedido-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const pedidoID = event.target.pedidoID.value;
+            const response = await fetch(`/pedidos/${pedidoID}`, {
+                method: 'DELETE'
+            });
+            console.log('Pedido eliminado:', await response.json());
+        });
+    </script>
+</body>
+</html>

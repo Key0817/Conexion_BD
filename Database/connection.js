@@ -1,8 +1,6 @@
 const sql = require('mssql');
 
-/*
-Config for connect to database
-*/ 
+/*Config for connect to database*/ 
 const dbSettings = {      
     user: 'sa',                    
     password: '1231231234',
@@ -15,9 +13,7 @@ const dbSettings = {
     },
 };
 
-/*
-Function to connect to the database
-*/ 
+/*Function to connect to the database*/ 
 async function getConnection() {
     try {
         const pool = await sql.connect(dbSettings);
@@ -27,4 +23,23 @@ async function getConnection() {
     }
 }
 
-module.exports = { getConnection };
+async function executeStoredProcedure(procedureName, inputParams) {
+    try {
+        const pool = await getConnection();
+        const request = pool.request();
+
+        for (const param in inputParams) {
+            if (inputParams.hasOwnProperty(param)) {
+                request.input(param, inputParams[param]);
+            }
+        }
+
+        const result = await request.execute(procedureName);
+        return result.recordset;
+    } catch (err) {
+        console.error('Error SQL', err);
+        throw err;
+    }
+}
+
+module.exports = { getConnection, executeStoredProcedure};

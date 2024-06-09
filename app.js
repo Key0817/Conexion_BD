@@ -4,23 +4,24 @@ const morgan = require('morgan');
 const cors = require('cors');
 const path = require('path');
 const controller = require('./Database/controller');
-const clienteRoutes = controller.router;
+const crudRoutes = require('./Database/controller').router;
+
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-/*
-Configurations for JSON
-*/
+/*Configurations for JSON*/
 app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(bodyParser.json());
 
-/*
-Routes
-*/
+
+// Usar las rutas definidas en el router del controller
+app.use(controller.router);
+
+/*Routes*/
 app.post('/additionalMovements', controller.GetAdditionalAccountMovement);
 app.post('/masterMovements', controller.GetMasterAccountMovements);
 app.post('/subAccountStatement', controller.GetSubAccountStatements);
@@ -36,12 +37,17 @@ app.get('/busqueda3', (req, res) => {
     res.sendFile(path.join(__dirname, 'Busqu_Inte', 'Busqueda3.html'));
 });
 
-// Usar las rutas definidas en el router del controller
-app.use(clienteRoutes);
 
-/*
-Start server
-*/
+// Servir archivos estáticos desde la carpeta 'Cruds'
+app.use(express.static(path.join(__dirname, 'Cruds')));
+// Manejar la solicitud GET para 'crud.html'
+app.get('/crud', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Cruds', 'crud.html'));
+});
+
+
+
+/*Start server*/
 app.listen(port, () => {
     console.log(`Conectado al servidor en el puerto ${port}`);
 });

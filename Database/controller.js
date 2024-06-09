@@ -1,9 +1,8 @@
 const express = require('express');
 const { getConnection } = require('./connection');
+const {executeStoredProcedure} = require('./connection');
 
-/*
-Function to call stored procedures
-*/
+/*Function to call stored procedures*/
 const callStoredProcedure = async (procedureName, inputs, outputs, res) => {
     try {
         const pool = await getConnection();
@@ -123,13 +122,13 @@ const login = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
-    }   
+    }
 };
 
 const obtenerClientes = async (req, res) => {
     try {
         const pool = await getConnection();
-        const result = await pool.request().query('SELECT [Nombre ], [Apellido 1], [Apellido 2] FROM PRUEBAS');
+        const result = await pool.request().query("SELECT p.[Nombre ], p.[Apellido 1], p.[Apellido 2], pl.[Canton] FROM [dbo].[PADRON] p JOIN [dbo].[places] pl ON p.[Mesa Electoral] = pl.[Codigo] WHERE pl.[Canton] = 'Golfito';");
         res.json(result.recordset);
     } catch (error) {
         console.error(error);
@@ -137,7 +136,72 @@ const obtenerClientes = async (req, res) => {
     }
 };
 
+
 const router = express.Router();
+
+// Obtener detalles de un pedido
+router.get('/pedidos/:pedidoID', async (req, res) => {
+    try {
+        const pedidoID = parseInt(req.params.pedidoID);
+        const result = await executeStoredProcedure('ObtenerDetallesPedido', { PedidoID: pedidoID });
+        res.json(result);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+// Crear un nuevo pedido
+router.post('/pedidos', async (req, res) => {
+    try {
+        const { Estado, Fecha, ClienteID, SucursalID, MetodoPagoID, Total, NumeroFactura } = req.body;
+
+        const result = await executeStoredProcedure('CrearPedido', {
+            Estado: Estado,
+            Fecha: Fecha,
+            ClienteID: ClienteID,
+            SucursalID: SucursalID,
+            MetodoPagoID: MetodoPagoID,
+            Total: Total,
+            NumeroFactura: NumeroFactura
+        });
+
+        res.json(result);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+// Actualizar estado de un pedido
+router.put('/pedidos/:pedidoID', async (req, res) => {
+    try {
+        const pedidoID = parseInt(req.params.pedidoID);
+        const { Estado, Fecha } = req.body;
+
+        const result = await executeStoredProcedure('ActualizarPedido', {
+            PedidoID: pedidoID,
+            Estado: Estado,
+            Fecha: Fecha
+        });
+
+        res.json(result);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+// Eliminar un pedido
+router.delete('/pedidos/:pedidoID', async (req, res) => {
+    try {
+        const pedidoID = parseInt(req.params.pedidoID);
+
+        const result = await executeStoredProcedure('EliminarPedido', { PedidoID: pedidoID });
+        res.json(result);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+
 
 // Ruta para obtener clientes
 router.get('/clientes', obtenerClientes);
@@ -149,6 +213,6 @@ module.exports = {
     ShowMasterAccountStatement,
     ShowPhysicalCard,
     login,
-    obtenerClientes, // Asegúrate de exportar esta función también
-    router,
+    obtenerClientes,
+    router
 };
