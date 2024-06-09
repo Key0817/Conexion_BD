@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Pedidos</title>
     <link rel="stylesheet" href="crudStyle.css">
 </head>
+
 <body>
     <h1>Gestión de Pedidos</h1>
     <!-- Formulario para crear pedido -->
@@ -13,18 +15,25 @@
         <input type="text" name="Estado" placeholder="Estado" required>
         <input type="date" name="Fecha" required>
         <input type="number" name="ClienteID" placeholder="ID del Cliente" required>
+        <input type="number" name="NCaja" placeholder="Número de Caja" required>
         <input type="number" name="SucursalID" placeholder="ID de la Sucursal" required>
+        <input type="text" name="DFactura" placeholder="Detalle de Factura" required>
         <input type="number" name="MetodoPagoID" placeholder="ID del Método de Pago" required>
+        <input type="number" name="MPrecio" placeholder="Precio unitario" required>
         <input type="number" name="Total" placeholder="Total" required>
+        <input type="number" name="IVA" placeholder="IVA" required>
         <input type="number" name="NumeroFactura" placeholder="Número de Factura" required>
+        <input type="text" name="Promo" placeholder="Promoción" required>
         <button type="submit">Crear Pedido</button>
     </form>
+
 
     <!-- Formulario para obtener detalles de pedido -->
     <form id="get-pedido-form">
         <input type="number" name="pedidoID" placeholder="ID del Pedido" required>
         <button type="submit">Obtener Detalles del Pedido</button>
     </form>
+
 
     <!-- Formulario para actualizar pedido -->
     <form id="update-pedido-form">
@@ -41,16 +50,23 @@
     </form>
 
     <script>
+
+        // Crear pedido
         document.getElementById('create-pedido-form').addEventListener('submit', async function (event) {
             event.preventDefault();
             const data = {
                 Estado: event.target.Estado.value,
                 Fecha: event.target.Fecha.value,
                 ClienteID: event.target.ClienteID.value,
+                NCaja: event.target.NCaja.value,
                 SucursalID: event.target.SucursalID.value,
+                DFactura: event.target.DFactura.value,
                 MetodoPagoID: event.target.MetodoPagoID.value,
+                MPrecio: event.target.MPrecio.value,
                 Total: event.target.Total.value,
-                NumeroFactura: event.target.NumeroFactura.value
+                IVA: event.target.IVA.value,
+                NumeroFactura: event.target.NumeroFactura.value,
+                Promo: event.target.Promo.value
             };
             const response = await fetch('/pedidos', {
                 method: 'POST',
@@ -62,6 +78,7 @@
             console.log('Pedido creado:', await response.json());
         });
 
+        // Obtener detalles del pedido
         document.getElementById('get-pedido-form').addEventListener('submit', async function (event) {
             event.preventDefault();
             const pedidoID = event.target.pedidoID.value;
@@ -69,6 +86,9 @@
             console.log('Detalles del pedido:', await response.json());
         });
 
+
+
+        //Acctualizar Pedido 
         document.getElementById('update-pedido-form').addEventListener('submit', async function (event) {
             event.preventDefault();
             const pedidoID = event.target.pedidoID.value;
@@ -86,6 +106,7 @@
             console.log('Pedido actualizado:', await response.json());
         });
 
+        //Eliminar Pedido
         document.getElementById('delete-pedido-form').addEventListener('submit', async function (event) {
             event.preventDefault();
             const pedidoID = event.target.pedidoID.value;
@@ -96,4 +117,5 @@
         });
     </script>
 </body>
+
 </html>

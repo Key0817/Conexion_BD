@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const path = require('path');
 const controller = require('./Database/controller');
-const crudRoutes = require('./Database/controller').router;
+
 
 
 const app = express();
