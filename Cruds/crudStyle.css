@@ -51,3 +51,26 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+
+#pedido-details-list {
+    list-style: none;
+    padding: 0;
+    border: 1px solid #ccc;
+    max-height: 200px; 
+    overflow: auto; 
+    list-style: none;
+    padding: 0;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow: auto;
+    background-color: #f9f9f9; /* Color de fondo */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#pedido-details-list li {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}

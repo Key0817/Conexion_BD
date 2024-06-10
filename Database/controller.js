@@ -4,7 +4,7 @@ const { executeStoredProcedure } = require('./connection');
 
 
 // Función para llamar a procedimientos almacenados
-const callStoredProcedureCP = async (procedureName, inputs, outputs = []) => {
+const callStoredProcedureCP = async (procedureName, inputs, outputs) => {
     const pool = await getConnection();
     const request = pool.request();
 
@@ -13,7 +13,7 @@ const callStoredProcedureCP = async (procedureName, inputs, outputs = []) => {
         request.input(input.name, input.value);
     }
 
-    // Añadir salidas a la solicitud si están definidas
+    // Añadir salidas a la solicitud
     for (const output of outputs) {
         request.output(output.name, output.value);
     }
@@ -166,6 +166,7 @@ router.get('/pedidos/:pedidoID', async (req, res) => {
     try {
         const pedidoID = parseInt(req.params.pedidoID);
         const result = await executeStoredProcedure('ObtenerDetallesPedido', { PedidoID: pedidoID });
+        console.log(result); 
         res.json(result);
     } catch (error) {
         res.status(500).send(error.message);

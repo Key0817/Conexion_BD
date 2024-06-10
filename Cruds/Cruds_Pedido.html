@@ -36,6 +36,9 @@
         <button type="submit">Obtener Detalles del Pedido</button>
     </form>
 
+    <!-- Lista para mostrar los detalles del pedido -->
+    <ul id="pedido-details-list" style="display: none;"></ul>
+
 
     <!-- Formulario para actualizar pedido -->
     <h5>Actualizar Pedido</h5>
@@ -87,10 +90,37 @@
             event.preventDefault();
             const pedidoID = event.target.pedidoID.value;
             const response = await fetch(`/pedidos/${pedidoID}`);
-            console.log('Detalles del pedido:', await response.json());
+            const detallesPedido = await response.json();
+            mostrarDetallesPedido(detallesPedido);
         });
 
+        function mostrarDetallesPedido(detallesPedido) {
+            const listaDetalles = document.getElementById('pedido-details-list');
+            listaDetalles.innerHTML = ''; // Limpiar la lista antes de agregar nuevos elementos
 
+            if (detallesPedido.length === 0) {
+                const li = document.createElement('li');
+                li.textContent = 'No hay valores para mostrar, Inserte un ID correcto';
+                listaDetalles.appendChild(li);
+            } else {
+                detallesPedido.forEach(detalle => {
+                    Object.entries(detalle).forEach(([key, value]) => {
+                        const li = document.createElement('li');
+                        li.textContent = `${key}: ${value}`;
+                        listaDetalles.appendChild(li);
+                    });
+                });
+            }
+
+            listaDetalles.style.display = 'block'; // Mostrar la lista después de agregar los elementos
+        }
+
+
+        // Evento de la lista en obtener detalles del producto 
+        document.getElementById('toggle-table-button').addEventListener('click', function () {
+            const listaDetalles = document.getElementById('pedido-details-list');
+            listaDetalles.style.maxHeight = listaDetalles.style.maxHeight === '200px' ? 'none' : '200px';
+        });
 
         //Acctualizar Pedido 
         document.getElementById('update-pedido-form').addEventListener('submit', async function (event) {
