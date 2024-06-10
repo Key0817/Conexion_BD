@@ -63,6 +63,10 @@ app.get('/crudg', (req, res) => {
 });
 
 
+// Manejar la solicitud GET para la página de inicio
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 /*Start server*/
 app.listen(port, () => {
     console.log(`Conectado al servidor en el puerto ${port}`);

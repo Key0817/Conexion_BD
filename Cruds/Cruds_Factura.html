@@ -6,12 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion de Factura</title>
     <link rel="stylesheet" href="crudStyle.css">
+    
 </head>
 
 <body>
     <h1>Gestion de Factura</h1>
 
     <!-- Formulario para insertar factura -->
+     <h5>Insertar Facturas</h5>
     <form id="insertar-factura-form">
         <input type="number" name="ClienteID" placeholder="ID del Cliente" required>
         <input type="number" name="CajaID" placeholder="ID de la Caja" required>
@@ -28,6 +30,7 @@
     </form>
 
     <!-- Formulario para actualizar factura -->
+    <h5>Actualizar Facturas</h5>
     <form id="actualizar-factura-form">
         <input type="number" name="ClienteID" placeholder="ID del Cliente" required>
         <input type="number" name="CajaID" placeholder="ID de la Caja" required>
@@ -43,6 +46,7 @@
     </form>
 
     <!-- Formulario para eliminar factura -->
+    <h5>Eliminar Facturas</h5>
     <form id="eliminar-factura-form">
         <input type="number" name="FacturaID" placeholder="ID de la Factura a eliminar" required>
         <button type="submit">Eliminar Factura</button>
