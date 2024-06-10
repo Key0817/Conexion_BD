@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de local</title>
+    <link rel="stylesheet" href="crudStyle.css">
+</head>
+
+<body>
+    <h1>Gestion de local</h1>
+
+    <!-- Formulario para agregar producto a pedido -->
+    <form id="agregar-producto-pedido-form">
+        <input type="number" name="MenuID" placeholder="ID del Menú" required>
+        <input type="number" name="PedidoID" placeholder="ID del Pedido" required>
+        <input type="number" name="InsumoID" placeholder="ID del Insumo" required>
+        <input type="number" name="ProductoID" placeholder="ID del Producto" required>
+        <input type="number" name="Cantidad" placeholder="Cantidad" required>
+        <button type="submit">Agregar Producto a Pedido</button>
+    </form>
+
+    <!-- Formulario para actualizar inventario -->
+    <form id="actualizar-inventario-form">
+        <input type="number" name="ProductoID" placeholder="ID del Insumo" required>
+        <input type="number" name="Cantidad" placeholder="Cantidad" required>
+        <select name="Accion" required>
+            <option value="+">Aumentar</option>
+            <option value="-">Decrementar</option>
+        </select>
+        <button type="submit">Actualizar Inventario</button>
+    </form>
+
+    <!-- Formulario para registrar pago -->
+    <form id="registrar-pago-form">
+        <input type="number" name="PedidoID" placeholder="ID del Pedido" required>
+        <input type="number" name="Monto" placeholder="Monto" required>
+        <input type="number" name="MetodoPagoID" placeholder="ID del Método de Pago" required>
+        <button type="submit">Registrar Pago</button>
+    </form>
+
+    <!-- Formulario para insertar pedido -->
+    <form id="insertar-pedido-form">
+        <input type="text" name="Estado" placeholder="Estado" required>
+        <input type="date" name="Fecha" required>
+        <button type="submit">Insertar Pedido</button>
+    </form>
+
+    <!-- Formulario para actualizar estado de pedido -->
+    <form id="actualizar-estado-pedido-form">
+        <input type="number" name="PedidoID" placeholder="ID del Pedido" required>
+        <input type="text" name="NuevoEstado" placeholder="Nuevo Estado" required>
+        <button type="submit">Actualizar Estado de Pedido</button>
+    </form>
+
+    <script>
+        // Agregar producto a pedido
+        document.getElementById('agregar-producto-pedido-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const data = {
+                MenuID: event.target.MenuID.value,
+                PedidoID: event.target.PedidoID.value,
+                InsumoID: event.target.InsumoID.value,
+                ProductoID: event.target.ProductoID.value,
+                Cantidad: event.target.Cantidad.value
+            };
+            const response = await fetch('/agregar-producto-pedido', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            console.log('Producto agregado a pedido:', await response.json());
+        });
+
+        // Actualizar inventario
+        document.getElementById('actualizar-inventario-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const data = {
+                ProductoID: event.target.ProductoID.value,
+                Cantidad: event.target.Cantidad.value,
+                Accion: event.target.Accion.value
+            };
+            const response = await fetch('/actualizar-inventario', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            console.log('Inventario actualizado:', await response.json());
+        });
+
+        // Registrar pago
+        document.getElementById('registrar-pago-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const data = {
+                PedidoID: event.target.PedidoID.value,
+                Monto: event.target.Monto.value,
+                MetodoPagoID: event.target.MetodoPagoID.value
+            };
+            const response = await fetch('/registrar-pago', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            console.log('Pago registrado:', await response.json());
+        });
+
+        // Insertar pedido
+        document.getElementById('insertar-pedido-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const data = {
+                Estado: event.target.Estado.value,
+                Fecha: event.target.Fecha.value
+            };
+            const response = await fetch('/insertar-pedido', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            console.log('Pedido insertado:', await response.json());
+        });
+
+        // Actualizar estado de pedido
+        document.getElementById('actualizar-estado-pedido-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const data = {
+                PedidoID: event.target.PedidoID.value,
+                NuevoEstado: event.target.NuevoEstado.value
+            };
+            const response = await fetch('/actualizar-estado-pedido', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            console.log('Estado de pedido actualizado:', await response.json());
+        });
+    </script>
+</body>
+
+</html>

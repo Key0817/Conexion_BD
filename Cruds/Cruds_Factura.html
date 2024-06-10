@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Factura</title>
+    <link rel="stylesheet" href="crudStyle.css">
+</head>
+
+<body>
+    <h1>Gestion de Factura</h1>
+
+    <!-- Formulario para insertar factura -->
+    <form id="insertar-factura-form">
+        <input type="number" name="ClienteID" placeholder="ID del Cliente" required>
+        <input type="number" name="CajaID" placeholder="ID de la Caja" required>
+        <input type="number" name="MetodoPagoID" placeholder="ID del Método de Pago" required>
+        <input type="date" name="DetalleTiempo" required>
+        <input type="number" name="NumeroFactura" placeholder="Número de Factura" required>
+        <input type="number" name="Precio" placeholder="Precio" required>
+        <input type="text" name="Promocion" placeholder="Promoción">
+        <input type="number" name="Total" placeholder="Total" required>
+        <input type="number" name="IVA" placeholder="IVA" required>
+        <input type="number" name="PedidoID" placeholder="ID del Pedido" required>
+        <input type="text" name="DescripcionFactura" placeholder="Descripción de la Factura" required>
+        <button type="submit">Insertar Factura</button>
+    </form>
+
+    <!-- Formulario para actualizar factura -->
+    <form id="actualizar-factura-form">
+        <input type="number" name="ClienteID" placeholder="ID del Cliente" required>
+        <input type="number" name="CajaID" placeholder="ID de la Caja" required>
+        <input type="number" name="MetodoPagoID" placeholder="ID del Método de Pago" required>
+        <input type="date" name="DetalleTiempo" required>
+        <input type="number" name="NumeroFactura" placeholder="Número de Factura" required>
+        <input type="number" name="Precio" placeholder="Precio" required>
+        <input type="text" name="Promocion" placeholder="Promoción">
+        <input type="number" name="Total" placeholder="Total" required>
+        <input type="number" name="IVA" placeholder="IVA" required>
+        <input type="text" name="DescripcionFactura" placeholder="Descripción de la Factura" required>
+        <button type="submit">Actualizar Factura</button>
+    </form>
+
+    <!-- Formulario para eliminar factura -->
+    <form id="eliminar-factura-form">
+        <input type="number" name="FacturaID" placeholder="ID de la Factura a eliminar" required>
+        <button type="submit">Eliminar Factura</button>
+    </form>
+
+    <script>
+        // Insertar factura
+        document.getElementById('insertar-factura-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const data = {
+                ClienteID: event.target.ClienteID.value,
+                CajaID: event.target.CajaID.value,
+                MetodoPagoID: event.target.MetodoPagoID.value,
+                DetalleTiempo: event.target.DetalleTiempo.value,
+                NumeroFactura: event.target.NumeroFactura.value,
+                Precio: event.target.Precio.value,
+                Promocion: event.target.Promocion.value,
+                Total: event.target.Total.value,
+                IVA: event.target.IVA.value,
+                PedidoID: event.target.PedidoID.value,
+                DescripcionFactura: event.target.DescripcionFactura.value
+            };
+            const response = await fetch('/facturas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            console.log('Factura insertada:', result);
+        });
+        // Actualizar factura
+        document.getElementById('actualizar-factura-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const numeroFactura = event.target.NumeroFactura.value; // Usamos el número de factura en lugar del ID de factura
+            const data = {
+                ClienteID: event.target.ClienteID.value,
+                CajaID: event.target.CajaID.value,
+                MetodoPagoID: event.target.MetodoPagoID.value,
+                DetalleTiempo: event.target.DetalleTiempo.value,
+                Precio: event.target.Precio.value,
+                Promocion: event.target.Promocion.value,
+                Total: event.target.Total.value,
+                IVA: event.target.IVA.value,
+                DescripcionFactura: event.target.DescripcionFactura.value
+            };
+            const response = await fetch(`/facturas/${numeroFactura}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            console.log('Factura actualizada:', await response.json());
+        });
+
+        // Eliminar factura
+        document.getElementById('eliminar-factura-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const facturaID = event.target.FacturaID.value;
+            const response = await fetch(`/facturas/${facturaID}`, {
+                method: 'DELETE'
+            });
+            console.log('Factura eliminada:', await response.json());
+        });
+    </script>
+</body>
+
+</html>

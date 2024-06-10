@@ -20,6 +20,9 @@ app.use(bodyParser.json());
 
 // Usar las rutas definidas en el router del controller
 app.use(controller.router);
+// Servir archivos estáticos desde la carpeta 'Database'
+app.use('/Database', express.static(path.join(__dirname, 'Database')));
+
 
 /*Routes*/
 app.post('/additionalMovements', controller.GetAdditionalAccountMovement);
@@ -42,9 +45,22 @@ app.get('/busqueda3', (req, res) => {
 app.use(express.static(path.join(__dirname, 'Cruds')));
 // Manejar la solicitud GET para 'crud.html'
 app.get('/crud', (req, res) => {
-    res.sendFile(path.join(__dirname, 'Cruds', 'crud.html'));
+    res.sendFile(path.join(__dirname, 'Cruds', 'cruds_Pedido.html'));
 });
 
+// Servir archivos estáticos desde la carpeta 'Cruds'
+app.use(express.static(path.join(__dirname, 'Cruds')));
+// Manejar la solicitud GET para 'crud.html'
+app.get('/crudf', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Cruds', 'cruds_Factura.html'));
+});
+
+// Servir archivos estáticos desde la carpeta 'Cruds'
+app.use(express.static(path.join(__dirname, 'Cruds')));
+// Manejar la solicitud GET para 'crud.html'
+app.get('/crudg', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Cruds', 'Cruds_Gestion.html'));
+});
 
 
 /*Start server*/
